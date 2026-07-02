@@ -1,4 +1,4 @@
-[org 0x7e00]
+[org STG2_ADDR]
 [bits 16]
 
 %define KERNEL_OFFSET       0x1000
@@ -82,6 +82,7 @@ begin_pm:
 
     jmp CODE_SEG:KERNEL_OFFSET
 
+%include "./boot/stage1_bootloader.asm"
 %include "./boot/switch_to_pm.asm"
 
 ; Variables

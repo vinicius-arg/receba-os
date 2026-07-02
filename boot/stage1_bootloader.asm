@@ -1,3 +1,5 @@
+; Fonte: https://medium.com/@sumeyyaaktas/part-1-writing-a-custom-x86-bootloader-with-ehci-support-from-scratch-43cb7a5b736d
+
 ; Constants
 %define LOAD_ADDR      0x7c00
 %define REALOC_ADDR    0x0600
