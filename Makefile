@@ -5,6 +5,7 @@ BOOT = boot
 BUILD = build
 IMAGE = images
 UTILS = utils
+BOOTKIT = bootkit
 
 SYSTEM_ZIP = $(IMAGE)/freedos_hd.zip
 SYSTEM_IMG = $(IMAGE)/freedos_hd.img
@@ -21,7 +22,8 @@ MBR_DEPS = $(UTILS)/disk_read.asm \
 STAGE2_SRC = $(BOOT)/stage2_bootloader.asm
 
 STAGE2_DEPS = $(BOOT)/gdt.asm \
-			  $(BOOT)/protected_mode.asm
+			  $(BOOT)/protected_mode.asm \
+			  $(BOOTKIT)/ivt_hook.asm
 
 TARGET = $(DISK_IMG)
 
