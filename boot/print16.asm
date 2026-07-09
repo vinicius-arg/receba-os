@@ -14,4 +14,16 @@ print_string:
         jmp .print_loop
 
     .done:
+        push cx
+        push dx
+
+        ; BIOS delay to visual improvement
+        mov ah, 0x86
+        mov cx, 0x0003
+        mov dx, 0x0d40 ; 200 ms
+        int 0x15
+
+        pop dx
+        pop cx
+
         ret
