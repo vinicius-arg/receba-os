@@ -63,7 +63,7 @@ load_kernel:
         jmp $ ; Halt
 
 enable_a20:
-    pushad
+    pusha
     in al, 0x92
     or al, 2
     out 0x92, al
@@ -89,7 +89,7 @@ cursor_pos dd 0
 bootdrive db 0
 
 ; Strings
-stg2_init      db  "Starting bootloader stage 2 in Real Mode at 0x7e00...", 13, 10, 0
+stg2_init      db  10, "Starting bootloader stage 2 in Real Mode at 0x7e00...", 13, 10, 0
 a20_msg        db  "Enabled Fast A20 Gate.", 13, 10, 0
 kload_init     db  "Starting kernel loading from disk...", 13, 10, 0
 kload_att_err  db  "Kernel loading error. Trying again...", 13, 10, 0

@@ -4,13 +4,12 @@ switch_to_pm:
     cli
 
     ; Loading GDT
-    mov si, load_gdt
+    mov si, lgdt_msg
     call print_string
+
     lgdt [gdt_descriptor]
 
     ; Enabling protected mode
-    mov si, en_pmode
-    call print_string
     mov eax, cr0
     or eax, 0x1     ; Enables PE bit
     mov cr0, eax
@@ -38,5 +37,4 @@ init_pm:
 
 %include "gdt.asm"
 
-load_gdt db "Loading Global Descriptor Table...", 0
-en_pmode db "Switched to 32-bit Protected Mode.", 0
+lgdt_msg db "Loading Global Descriptor Table...", 13, 10, 0

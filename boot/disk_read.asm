@@ -24,5 +24,5 @@ read_sector:
         call print_string
         jmp $
 
-disk_read db   "Reading disk sectors at 0x0000", 0
-read_error db  "Disk read error.", 0
+disk_read db   "Reading disk sectors...", 13, 10, 0
+read_error db  "Disk read error.", 13, 10, 0
