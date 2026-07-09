@@ -64,8 +64,8 @@ boot_init    db  "Starting Receba Bootloader in Real Mode at 0x7c00...", 13, 10,
 bd_saved     db  "Saved Boot Device Drive.", 13, 10, 0
 mbr_realloc  db  "Bootloader address reallocated to 0x0600.", 13, 10, 0
 
-%include "print16.asm"
-%include "disk_read.asm"
+%include "../utils/print16.asm"
+%include "../utils/disk_read.asm"
 
 times 446 - ($ - $$) db 0
 times 64 db 0

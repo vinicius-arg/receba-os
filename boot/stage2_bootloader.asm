@@ -1,9 +1,8 @@
 [org 0x7e00]
 [bits 16]
 
-%define KERNEL_OFFSET       0x1000
+%define KERNEL_OFFSET       0x7c00
 %define KERNEL_SEGMENT      0x0000
-%define KERNEL_SECTORS      16
 %define VGA_3RDLINE_OFFSET  480
 
 start_stg2:
@@ -32,11 +31,11 @@ load_kernel:
 
     ; Reading kernel disk sector
     mov ah, 0x02
-    mov al, KERNEL_SECTORS
+    mov al, 1
     mov ch, 0
-    mov cl, 10 ; Reading at sector 10
+    mov cl, 1 ; Reading at sector 1
     mov dh, 0
-    mov dl, [bootdrive]
+    mov dl, 0x80 ; First HD
     int 0x13
 
     pop cx
@@ -53,9 +52,15 @@ load_kernel:
         cmp ax, 0
         je .error
 
-        ; Finishing kernel loading
-        mov dword [cursor_pos], VGA_3RDLINE_OFFSET
-        call switch_to_pm
+        ; Finishing kernel loading (Real Mode)
+        mov si, kload_success
+        call print_string
+
+        jmp KERNEL_SEGMENT:KERNEL_OFFSET
+
+        ; Finishing kernel loading (Protected Mode)
+        ; mov dword [cursor_pos], VGA_3RDLINE_OFFSET
+        ; call switch_to_pm
 
     .error:
         mov si, kload_err
@@ -82,7 +87,7 @@ begin_pm:
     jmp CODE_SEG:KERNEL_OFFSET
 
 %include "protected_mode.asm"
-%include "print16.asm"
+%include "../utils/print16.asm"
 
 ; Variables
 cursor_pos dd 0
@@ -94,5 +99,6 @@ a20_msg        db  "Enabled Fast A20 Gate.", 13, 10, 0
 kload_init     db  "Starting kernel loading from disk...", 13, 10, 0
 kload_att_err  db  "Kernel loading error. Trying again...", 13, 10, 0
 kload_err      db  "Error while trying to load the kernel. Aborted.", 13, 10, 0
+kload_success  db  10, "Kernel loaded successfully!", 13, 10, "Transfering control...", 13, 10, 10, 10, 0
 
 times 4096 - ($ - $$) db 0
