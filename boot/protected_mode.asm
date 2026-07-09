@@ -36,7 +36,7 @@ init_pm:
 
     call begin_pm
 
-%include "./boot/print16.asm"
+%include "gdt.asm"
 
 load_gdt db "Loading Global Descriptor Table...", 0
 en_pmode db "Switched to 32-bit Protected Mode.", 0

@@ -1,7 +1,7 @@
 read_sectors:
     mov ah, 0x02
     int 0x13
-    jc .fail
+    jc read_sector.fail
 
     mov si, disk_read
     call print_string
@@ -19,13 +19,10 @@ read_sector:
 
     ret
 
-.fail:
-    mov si, read_error_msg
-    call print_string
-    jmp $
-
+    .fail:
+        mov si, read_error
+        call print_string
+        jmp $
 
 disk_read db   "Reading disk sectors at 0x0000", 0
 read_error db  "Disk read error.", 0
-
-%include "./boot/print.asm"

@@ -1,4 +1,4 @@
-[org STG2_ADDR]
+[org 0x7e00]
 [bits 16]
 
 %define KERNEL_OFFSET       0x1000
@@ -9,15 +9,17 @@
 start_stg2:
     mov [bootdrive], dl
 
-    ; mov bx, real_mode_str
-    ; ...
+    mov si, stg2_init
+    call print_string
 
     call enable_a20
 
-    ; mov bx, loading_kernel_str
-    ; ...
+    mov si, a20_msg
+    call print_string
 
     ; Loading kernel
+    mov si, kload_init
+    call print_string
     ; 3-try retry mechanism
     mov cx, 3
 
@@ -38,12 +40,27 @@ load_kernel:
     int 0x13
 
     pop cx
-    jnc .kernel_load_success
+    jnc .success
 
-    ; mov bx, retry
-    ; ...
+    mov si, kload_att_err
+    call print_string
 
     loop load_kernel
+
+    .success:
+        ; Sanity check
+        mov ax, [KERNEL_OFFSET]
+        cmp ax, 0
+        je .error
+
+        ; Finishing kernel loading
+        mov dword [cursor_pos], VGA_3RDLINE_OFFSET
+        call switch_to_pm
+
+    .error:
+        mov si, kload_err
+        call print_string
+        jmp $ ; Halt
 
 enable_a20:
     pushad
@@ -52,24 +69,6 @@ enable_a20:
     out 0x92, al
     popa
     ret
-
-.kernel_load_success:
-    ; Sanity check
-    mov ax, [KERNEL_OFFSET]
-    cmp ax, 0
-    je .kernel_load_error
-
-    ; mov bx, kernel_loaded_str
-    ; ...
-
-    ; Finishing kernel loading
-    mov dword [cursor_pos], VGA_3RDLINE_OFFSET
-    call switch_to_pm
-
-.kernel_load_error:
-    mov si, kernel_lerror_msg
-    call print_string
-    jmp $ ; Halt
 
 [bits 32]
 
@@ -82,13 +81,18 @@ begin_pm:
 
     jmp CODE_SEG:KERNEL_OFFSET
 
-%include "./boot/stage1_bootloader.asm"
-%include "./boot/switch_to_pm.asm"
+%include "protected_mode.asm"
+%include "print16.asm"
 
 ; Variables
 cursor_pos dd 0
+bootdrive db 0
 
 ; Strings
-kernel_lerror_msg db "Error while trying to load the kernel."
+stg2_init      db  "Starting bootloader stage 2 in Real Mode at 0x7e00...", 13, 10, 0
+a20_msg        db  "Enabled Fast A20 Gate.", 13, 10, 0
+kload_init     db  "Starting kernel loading from disk...", 13, 10, 0
+kload_att_err  db  "Kernel loading error. Trying again...", 13, 10, 0
+kload_err      db  "Error while trying to load the kernel. Aborted.", 13, 10, 0
 
 times 4096 - ($ - $$) db 0

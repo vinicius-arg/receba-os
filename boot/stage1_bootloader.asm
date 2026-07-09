@@ -54,21 +54,18 @@ continue_boot:
     mov bx, STG2_ADDR
     call read_sectors
     
-    jmp 0x0000: STG2_ADDR
-
-    ; Halt
-    jmp $
+    jmp 0x0000:STG2_ADDR
 
 ; Variables
 bootdrive db 0
 
 ; Strings
-boot_init db    "Starting RecebaOS boot...", 0
-bd_saved db     "Boot device drive saved into 0x0000.", 0
-mbr_realloc db  "MBR reallocated to 0x0000.", 0
+boot_init    db  "Starting Receba Bootloader in Real Mode at 0x7c00...", 13, 10, 0
+bd_saved     db  "Saved Boot Device Drive.", 13, 10, 0
+mbr_realloc  db  "Bootloader address reallocated to 0x0600.", 13, 10, 0
 
-%include "./boot/print16.asm"
-%include "./boot/disk_read.asm"
+%include "print16.asm"
+%include "disk_read.asm"
 
 times 446 - ($ - $$) db 0
 times 64 db 0
