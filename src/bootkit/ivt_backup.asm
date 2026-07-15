@@ -1,5 +1,6 @@
 [bits 16]
 
+; TODO: Make this work
 ; This routine saves IVT to hidden addresses in range [0x0013]:0x0000, [0x0013]:0x03ff
 save_ivt:
     pusha

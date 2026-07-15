@@ -1,3 +1,5 @@
-build
-images
-!images/freedos_hd.zip
+src/build
+src/images
+!src/images/freedos_hd.zip
+
+bin

