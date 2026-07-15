@@ -66,7 +66,17 @@ run: $(DISK_IMG) $(SYSTEM_IMG)
 			-serial tcp:127.0.0.1:3000,server,nowait \
 			-boot a
 
+# Prepares shellcodes to be injected in VM
+# Usage: make inject SC=receba
+inject:
+	@if [ -z "$(SC)" ]; then \
+		@echo "No shellcode specified. Exiting."; exit 1; \
+	fi
+	$(ASM) -f bin $(SCD)/$(SC).asm -o $(BIN)/$(SC).bin
+	nc 127.0.0.1 3000 < $(BIN)/$(SC).bin
+	@echo "Shellcode $(SC) was successfully injected." 
+
 clean:
 	rm -rf $(BUILD) $(DISK_IMG)
 
-.PHONY: all run clean
+.PHONY: all inject run clean
