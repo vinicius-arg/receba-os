@@ -54,14 +54,8 @@ start:
         pushf
         call far [cs:(bios_old_vector - keyboard_hook)]
 
-        pushf
-        pusha
+        pop bx
 
-        ; Verifying int 'ah' param
-        push bp
-        mov bp, sp
-
-        mov bx, [bp+20]
         cmp bh, 0x00
         je .send_byte
         cmp bh, 0x10
@@ -83,19 +77,6 @@ start:
                 out dx, al ; Writes on COM1
 
         .done:
-            pop bp
-            popa
-            popf
-            pop ax
-
-            ; Stack patching
-            push bp
-            mov bp, sp
-            pushf
-            pop ax
-            mov [bp+6], ax
-            pop bp
-
             iret
 
         bios_old_vector:
