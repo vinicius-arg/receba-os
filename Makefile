@@ -74,7 +74,7 @@ inject:
 	fi
 	$(ASM) -f bin $(SCD)/$(SC).asm -o $(BIN)/$(SC).bin
 	nc 127.0.0.1 3000 < $(BIN)/$(SC).bin
-	@echo "Shellcode $(SC) was successfully injected." 
+	@echo "\nShellcode $(SC) was successfully injected." 
 
 clean:
 	rm -rf $(BUILD) $(DISK_IMG)
