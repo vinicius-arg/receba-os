@@ -1,7 +1,7 @@
 [bits 16]
 
 ; Defines preamble and code size for communication
-dw 0xaabb
+dw 0xAABB
 dw end - start
 
 start:

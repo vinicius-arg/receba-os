@@ -12,12 +12,13 @@ exec_code:
     
     mov di, (buffer - hooks_start)
 
+    ; Verifying preamble signature
+    call sread_word
+    cmp cx, 0xAABB
+    jne .abort
+
     ; Getting size in binary reader
-    call sread_byte
-    mov cl, al
-    call sread_byte
-    mov ch, al
-    
+    call sread_word
     cmp cx, 0               
     je .abort
 
@@ -56,6 +57,13 @@ sread_byte:
         in al, dx
         pop dx
         ret
+
+sread_word:
+    call sread_byte
+    mov cl, al
+    call sread_byte
+    mov ch, al
+    ret
 
 buffer:
     times 256 db 0x90
